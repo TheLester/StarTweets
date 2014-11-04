@@ -12,7 +12,7 @@ public class AndroidNetworkUtility {
                 (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
             flag = true;
         }
         return flag;

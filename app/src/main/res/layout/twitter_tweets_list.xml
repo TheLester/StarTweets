@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ptr_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/tweet_background"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/bg_card"
+        android:layout_height="match_parent">
 
-        android:divider="@null"
-        android:showDividers="none">
-
-        <TextView
-            android:id="@+id/tweetTextView"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autoLink="web" />
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_card"
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_below="@+id/tweetTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textStyle="italic" />
-    </RelativeLayout>
+            android:divider="@null"
+            android:showDividers="none">
 
-</FrameLayout>
+            <TextView
+                android:id="@+id/tweetTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="web" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tweetTextView"
+                android:color="@color/date"
+                android:text="TextView"
+                android:textStyle="italic" />
+        </RelativeLayout>
+    </ScrollView>
+</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

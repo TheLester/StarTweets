@@ -7,8 +7,8 @@ public class TwitterTweet {
     @SerializedName("created_at")
     private String createdAt;
 
-    @SerializedName("id")
-    private String id;
+    @SerializedName("id_str")
+    private long id;
 
     @SerializedName("text")
     private String text;
@@ -29,7 +29,7 @@ public class TwitterTweet {
         return createdAt;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -53,7 +53,7 @@ public class TwitterTweet {
         this.createdAt = createdAt;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -82,7 +82,17 @@ public class TwitterTweet {
     }
 
     @Override
+    public boolean equals(Object o) {
+        boolean result = false;
+        if (o instanceof TwitterTweet) {
+            TwitterTweet that = (TwitterTweet) o;
+            result = (this.getId() == that.getId());
+        }
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return getText() + "\ncreated at: " + createdAt;
+        return getText()+ "\ncreated at: " + createdAt;
     }
 }

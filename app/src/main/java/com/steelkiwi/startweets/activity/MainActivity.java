@@ -1,28 +1,116 @@
 package com.steelkiwi.startweets.activity;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.steelkiwi.startweets.R;
+import com.steelkiwi.startweets.adapter.TweetsAdapter;
+import com.steelkiwi.startweets.async.TwitterAsyncTask;
+import com.steelkiwi.startweets.db.TweetsDataSource;
 import com.steelkiwi.startweets.util.AndroidNetworkUtility;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
-public class MainActivity extends ListActivity {
 
-    final static String twitterScreenName = "fouryearstrong";
-    final static String TAG = "MainActivity";
+public class MainActivity extends ListActivity implements OnRefreshListener {
+    private final static String TAG = "MainActivity";
+    private Menu menu;
+    private static String twitterScreenName = "BBCNews";
+    private AndroidNetworkUtility androidNetworkUtility;
+    private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AndroidNetworkUtility androidNetworkUtility = new AndroidNetworkUtility();
+        androidNetworkUtility = new AndroidNetworkUtility();
         if (androidNetworkUtility.isConnected(this)) {
             new com.steelkiwi.startweets.async.TwitterAsyncTask().execute(twitterScreenName, this);
         } else {
-            Toast.makeText(this, "No connection", Toast.LENGTH_LONG).show();
             Log.v(TAG, "Network not Available!");
+            TweetsDataSource dataSource = new TweetsDataSource(this);
+            dataSource.open();
+            TweetsAdapter adapter =
+                    new TweetsAdapter(this, R.layout.twitter_tweets_list, dataSource.getAllTweetsByAuthor(twitterScreenName));
+            setListAdapter(adapter);
+            ListView lv = getListView();
+            lv.setDividerHeight(0);
+            dataSource.close();
+            mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
+
+            // Now setup the PullToRefreshLayout
+            ActionBarPullToRefresh.from(this)
+                    // Mark All Children as pullable
+                    .allChildrenArePullable()
+                            // Set a OnRefreshListener
+                    .listener(this)
+
+                            // Finally commit the setup to our PullToRefreshLayout
+                    .setup(mPullToRefreshLayout);
         }
     }
+
+    @Override
+    public void onRefreshStarted(View view) {
+        if (androidNetworkUtility.isConnected(this)) {
+            TwitterAsyncTask twitterAsyncTask = new TwitterAsyncTask();
+            twitterAsyncTask.execute(twitterScreenName, this);
+        } else Toast.makeText(this, "No connection", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        this.menu = menu;
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                if (androidNetworkUtility.isConnected(this)) {
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    ImageView iv = (ImageView) inflater.inflate(R.layout.iv_refresh, null);
+                    Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+                    rotation.setRepeatCount(Animation.INFINITE);
+                    iv.startAnimation(rotation);
+                    item.setActionView(iv);
+                    TwitterAsyncTask twitterAsyncTask = new TwitterAsyncTask();
+                    twitterAsyncTask.execute(twitterScreenName, this);
+                } else Toast.makeText(this, "No connection", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void resetUpdating() {
+        // Get our refresh item from the menu
+        MenuItem m = menu.findItem(R.id.action_refresh);
+        if (m.getActionView() != null) {
+            // Remove the animation.
+            m.getActionView().clearAnimation();
+            m.setActionView(null);
+
+        }
+        if (mPullToRefreshLayout != null) mPullToRefreshLayout.setRefreshComplete();
+        Toast.makeText(this, "Done updating", Toast.LENGTH_LONG).show();
+    }
+
 }
