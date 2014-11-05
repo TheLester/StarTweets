@@ -1,6 +1,6 @@
 package com.steelkiwi.startweets.async;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.widget.ListView;
 
@@ -14,7 +14,7 @@ import com.steelkiwi.startweets.twitter.TwitterTweet;
 import java.util.ArrayList;
 
 public class TwitterAsyncTask extends AsyncTask<Object, Void, ArrayList<TwitterTweet>> {
-    private ListActivity callerActivity;
+    private Activity callerActivity;
     private String author;
     final static String TWITTER_API_KEY = "gyhX4bh5wDMC7xpkho5cMIgup";
     final static String TWITTER_API_SECRET = "U7XDXQhjQXQmI6EREkabtLzZZHFDT8N6Qv0ZKN5UKHlJCBdBIN";
@@ -22,7 +22,7 @@ public class TwitterAsyncTask extends AsyncTask<Object, Void, ArrayList<TwitterT
     @Override
     protected ArrayList<TwitterTweet> doInBackground(Object... params) {
         ArrayList<TwitterTweet> twitterTweets = null;
-        callerActivity = (ListActivity) params[1];
+        callerActivity = (Activity) params[1];
         author = params[0].toString();
         if (params.length > 0) {
             TwitterAPI twitterAPI = new TwitterAPI(TWITTER_API_KEY, TWITTER_API_SECRET);
@@ -44,9 +44,8 @@ public class TwitterAsyncTask extends AsyncTask<Object, Void, ArrayList<TwitterT
 
         TweetsAdapter adapter =
                 new TweetsAdapter(callerActivity, R.layout.twitter_tweets_list, dataSource.getAllTweetsByAuthor(author));
-        callerActivity.setListAdapter(adapter);
-        ListView lv = callerActivity.getListView();
-        lv.setDividerHeight(0);
+        final ListView listview = (ListView) callerActivity.findViewById(R.id.tweets_cont);
+        listview.setAdapter(adapter);
         dataSource.close();
         ((MainActivity) callerActivity).resetUpdating();
     }

@@ -30,7 +30,7 @@ public class TweetsAdapter extends ArrayAdapter<TwitterTweet> {
         if (v == null) {
             LayoutInflater vi =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.twitter_tweets_list, null);
+            v = vi.inflate(R.layout.list_item, null);
         }
         TwitterTweet tweet = tweets.get(position);
         if (tweet != null) {

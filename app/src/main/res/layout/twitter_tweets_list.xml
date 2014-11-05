@@ -4,36 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <ListView
+        android:id="@+id/tweets_cont"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_card"
-
-            android:divider="@null"
-            android:showDividers="none">
-
-            <TextView
-                android:id="@+id/tweetTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="web" />
-
-            <TextView
-                android:id="@+id/dateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tweetTextView"
-                android:color="@color/date"
-                android:text="TextView"
-                android:textStyle="italic" />
-        </RelativeLayout>
-    </ScrollView>
+        android:layout_height="match_parent"
+        android:dividerHeight="0dp"
+        >
+    </ListView>
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

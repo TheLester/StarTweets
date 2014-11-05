@@ -1,6 +1,6 @@
 package com.steelkiwi.startweets.activity;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +26,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 
-public class MainActivity extends ListActivity implements OnRefreshListener {
+public class MainActivity extends Activity implements OnRefreshListener {
     private final static String TAG = "MainActivity";
     private Menu menu;
     private static String twitterScreenName = "BBCNews";
@@ -36,7 +36,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.twitter_tweets_list);
         androidNetworkUtility = new AndroidNetworkUtility();
         if (androidNetworkUtility.isConnected(this)) {
             new com.steelkiwi.startweets.async.TwitterAsyncTask().execute(twitterScreenName, this);
@@ -46,22 +46,15 @@ public class MainActivity extends ListActivity implements OnRefreshListener {
             dataSource.open();
             TweetsAdapter adapter =
                     new TweetsAdapter(this, R.layout.twitter_tweets_list, dataSource.getAllTweetsByAuthor(twitterScreenName));
-            setListAdapter(adapter);
-            ListView lv = getListView();
-            lv.setDividerHeight(0);
+            final ListView listview = (ListView) findViewById(R.id.tweets_cont);
+            listview.setAdapter(adapter);
             dataSource.close();
-            mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
-
-            // Now setup the PullToRefreshLayout
-            ActionBarPullToRefresh.from(this)
-                    // Mark All Children as pullable
-                    .allChildrenArePullable()
-                            // Set a OnRefreshListener
-                    .listener(this)
-
-                            // Finally commit the setup to our PullToRefreshLayout
-                    .setup(mPullToRefreshLayout);
         }
+        mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
+        ActionBarPullToRefresh.from(MainActivity.this)
+                .allChildrenArePullable()
+                .listener(MainActivity.this)
+                .setup(mPullToRefreshLayout);
     }
 
     @Override
