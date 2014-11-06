@@ -3,4 +3,11 @@
 
     <string name="app_name">Tweets reader</string>
     <string name ="description_refresh">Refresh to get new Tweets</string>
+    <string name ="facebook_app_id">1492326847704782</string>
+    <string name ="share">Share</string>
+    <string name ="action_change_name">Set Twitter</string>
+    <string name ="ok_button">Set name</string>
+    <string name ="set_twitter">Set Twitter unique name of Star</string>
+    <string name ="empty_fields">Type name!</string>
+
 </resources>

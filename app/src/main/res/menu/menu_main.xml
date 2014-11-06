@@ -5,5 +5,8 @@
         android:id="@+id/action_refresh"
         android:showAsAction="ifRoom"
         android:title="Refresh"
-        android:icon="@drawable/ic_refresh"></item>
+        android:icon="@drawable/ic_refresh"/>
+    <item android:id="@+id/action_change_name"
+        android:title="@string/action_change_name"
+        android:showAsAction="ifRoom"  />
 </menu>

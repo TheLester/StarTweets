@@ -82,8 +82,12 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="library-0.9.9" level="project" />
+    <orderEntry type="library" exported="" name="simple.facebook-2.2" level="project" />
     <orderEntry type="library" exported="" name="library-0.4.0" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
+    <orderEntry type="library" exported="" name="bolts-android-1.1.2" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
+    <orderEntry type="module" module-name="facebook" exported="" />
   </component>
 </module>
 
