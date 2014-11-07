@@ -3,11 +3,14 @@ package com.steelkiwi.startweets.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +39,8 @@ import com.steelkiwi.startweets.db.TweetsDataSource;
 import com.steelkiwi.startweets.util.AndroidNetworkUtility;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
@@ -44,12 +49,10 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class MainActivity extends Activity implements OnRefreshListener {
     private final static String TAG = "MainActivity";
-    public static final String TWITTER_SH_PREF_KEY = "twitterStarName";
     private static final int PICK_IMAGE = 1;
+    private final String twitterScreenName = "fouryearstrong";
 
-    private SharedPreferences prefs;
     private Menu menu;
-    private String twitterScreenName;
     private AndroidNetworkUtility androidNetworkUtility;
     private PullToRefreshLayout mPullToRefreshLayout;
 
@@ -57,7 +60,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
     private String tweetText;
     private Permission[] permissions = new Permission[]{
             Permission.USER_PHOTOS,
-            Permission.EMAIL,
             Permission.PUBLISH_ACTION
     };
 
@@ -65,10 +67,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.twitter_tweets_list);
-        prefs = this.getSharedPreferences(
-                "com.steelkiwi.startweets", Context.MODE_PRIVATE);
-        twitterScreenName = prefs.getString(TWITTER_SH_PREF_KEY, "ladygaga");
-
+        debugHashKey();
         mSimpleFacebook = SimpleFacebook.getInstance(this);
         SimpleFacebookConfiguration configuration = new SimpleFacebookConfiguration.Builder()
                 .setAppId(getResources().getString(R.string.facebook_app_id))
@@ -104,7 +103,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
         mSimpleFacebook = SimpleFacebook.getInstance(this);
-        twitterScreenName = prefs.getString(TWITTER_SH_PREF_KEY, "ladygaga");
     }
 
     @Override
@@ -148,9 +146,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
                     twitterAsyncTask.execute(twitterScreenName, this);
                 } else Toast.makeText(this, "No connection", Toast.LENGTH_LONG).show();
                 return true;
-            case R.id.action_change_name:
-                Intent intent = new Intent(this, SetTwitterActivity.class);
-                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -175,7 +170,7 @@ public class MainActivity extends Activity implements OnRefreshListener {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select picture to share"), PICK_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select picture to share in fb"), PICK_IMAGE);
     }
 
     private OnLoginListener onLoginListener = new OnLoginListener() {
@@ -203,7 +198,6 @@ public class MainActivity extends Activity implements OnRefreshListener {
 
         @Override
         public void onFail(String s) {
-
         }
     };
     private OnPublishListener onPublishListener = new OnPublishListener() {
@@ -245,5 +239,22 @@ public class MainActivity extends Activity implements OnRefreshListener {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void debugHashKey() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.steelkiwi.startweets",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
     }
 }
